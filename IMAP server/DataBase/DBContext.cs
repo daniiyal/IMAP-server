@@ -79,5 +79,16 @@ namespace IMAP_server.DataBase
         }
 
 
+        public async Task DeleteUser(string name)
+        {
+            var usersCollection = GetCollection(database, "Clients");
+
+            BsonDocument user = new BsonDocument
+            {
+                {"Name", name},
+            };
+
+            await usersCollection.DeleteOneAsync(user);
+        }
     }
 }

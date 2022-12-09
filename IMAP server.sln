@@ -5,7 +5,10 @@ VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IMAP server", "IMAP server\IMAP server.csproj", "{D7689EA0-FA69-4BF9-9FC5-A4B1A9FFBDBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IMAPServerGui", "IMAPServerGui\IMAPServerGui.csproj", "{D935E04D-ABBE-4527-A63E-1DD0826ED28A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IMAPServerGui", "IMAPServerGui\IMAPServerGui.csproj", "{D935E04D-ABBE-4527-A63E-1DD0826ED28A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D7689EA0-FA69-4BF9-9FC5-A4B1A9FFBDBD} = {D7689EA0-FA69-4BF9-9FC5-A4B1A9FFBDBD}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

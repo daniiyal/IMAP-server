@@ -13,7 +13,7 @@ namespace IMAP_server
 {
     public class Server
     {
-        private DBContext Db { get; }
+        public DBContext Db { get; }
         private TcpListener Listener { get; }
         private TcpClient TcpClient { get; set; }
 
@@ -32,6 +32,7 @@ namespace IMAP_server
         public void StopServer()
         {
             Listener.Stop();
+            Console.WriteLine("Сервер остановлен.");
         }
 
         public async Task ConnectClient()
@@ -57,10 +58,6 @@ namespace IMAP_server
             
         }
 
-        public void Authenticate()
-        {
-
-        }
 
     }
 }
