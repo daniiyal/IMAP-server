@@ -56,25 +56,20 @@ namespace IMAP_server.DataBase
         {
             var usersCollection = GetCollection(database, "Clients");
 
-            BsonDocument user = new BsonDocument
-            {
-                {"Name", client.Name},
-                {"Password", client.Password}
-            };
+            var clientBson = client.ToBsonDocument();
 
-            await usersCollection.InsertOneAsync(user);
-
+            await usersCollection.InsertOneAsync(clientBson);
         }
 
         public async Task<bool> Authenticate(ClientEntity client)
         {
             var dbClient = await GetClientAsync(client.Name);
 
-            if (dbClient != null) 
+            if (dbClient != null)
                 return dbClient.Password == client.Password;
-            
+
             await SaveClient(client);
-            
+
             return true;
         }
 
@@ -90,5 +85,27 @@ namespace IMAP_server.DataBase
 
             await usersCollection.DeleteOneAsync(user);
         }
+
+        public async Task<List<ClientBoxEntity>?> GetBoxes(string name)
+        {
+            var user = await GetClientAsync(name);
+
+            return user?.ClientBox;
+        }
+
+        public async Task<ClientBoxEntity?> GetBox(string name, string boxName)
+        {
+            var user = await GetClientAsync(name);
+
+            return user?.ClientBox.Find(c => c.Name == boxName);
+        }
+
+        //public async Task DeleteMail(string name, string boxName, uint mailUid)
+        //{
+        //    var box = await GetBox(name, boxName);
+        //    var usersCollection = GetCollection(database, "Clients");
+        //    var mail = box.Mails.Remove(box.Mails.Find(m => m.Uid == mailUid));
+        //    await usersCollection.Upda(box);
+        //}
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IMAP_server
+namespace IMAP_server.Enums
 {
     public class Status
     {
@@ -13,7 +13,7 @@ namespace IMAP_server
             Value = value;
         }
 
-        public string Value { get;}
+        public string Value { get; }
 
 
         public static Status OK => new("OK");

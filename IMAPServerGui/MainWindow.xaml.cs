@@ -20,7 +20,7 @@ namespace IMAPServerGui
     {
         private Server Server { get; set; }
 
-        private String IP { get; set; } = "127.0.1.1";
+        private String IP { get; set; } = "127.0.0.1";
         private int Port { get; set; } = 143;
 
         public MainWindow()
