@@ -56,7 +56,9 @@ namespace IMAP_server
                                 case "CLOSE":
                                     await CloseBox(commandNum, request);
                                     break;
-                                    ;
+                                case "LOGOUT":
+                                    await Logout(commandNum);
+                                    return;
                                 default:
                                     await SendMessageAsync("*", Status.BAD, "Unknown Command");
                                     break;
@@ -74,6 +76,22 @@ namespace IMAP_server
             {
                 Console.WriteLine(e.Message);
             }
+        }
+
+        private async Task Logout(string commandNum)
+        {
+            try
+            {
+                Console.WriteLine($"Клиент - {client.Client.RemoteEndPoint} отключился");
+                await SendServiceResponseAsync("BYE SUETA... IMAP server logging out");
+                await SendMessageAsync(commandNum, Status.OK, "Logout Completed");
+                client.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+          
         }
 
         private async Task CloseBox(string commandNum, string request)
