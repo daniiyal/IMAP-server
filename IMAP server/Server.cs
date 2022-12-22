@@ -25,14 +25,34 @@ namespace IMAP_server
 
         public void StartServer()
         {
-            Listener.Start();
-            Console.WriteLine("Сервер запустился. Ожидание подключений...");
+            try
+            {
+                Listener.Start();
+                Console.WriteLine("Сервер запустился. Ожидание подключений...");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Не удалось запустить сервер");
+                Console.WriteLine(ex.Message);
+            }
         }
 
         public void StopServer()
         {
             Listener.Stop();
             Console.WriteLine("Сервер остановлен.");
+        }
+
+        public static string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            if (host.AddressList[3].AddressFamily == AddressFamily.InterNetwork)
+            {
+                return host.AddressList[3].ToString();
+
+            }
+
+            throw new Exception("No network adapters with an IPv4 address in the system!");
         }
 
         public async Task ConnectClient()

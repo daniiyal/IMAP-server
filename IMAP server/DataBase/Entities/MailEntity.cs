@@ -12,9 +12,6 @@ namespace IMAP_server.DataBase.Entities
 {
     public class MailEntity
     {
-        [BsonId]
-        public ObjectId Id { get; set; }
-
         public uint Uid { get; private set; }
         public MailFlag MailFlag { get; set; }
         public string From { get; set; }

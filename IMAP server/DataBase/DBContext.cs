@@ -26,7 +26,7 @@ namespace IMAP_server.DataBase
         public async Task<ClientEntity?> GetClientAsync(string name)
         {
             ClientEntity? client = null;
-            var filter = new BsonDocument { { "Name", name } };
+            var filter = new BsonDocument {{"Name", name}};
             var dbClient = await GetCollection(database, "Clients").Find(filter).FirstOrDefaultAsync();
 
             if (dbClient == null)
@@ -97,15 +97,53 @@ namespace IMAP_server.DataBase
         {
             var user = await GetClientAsync(name);
 
-            return user?.ClientBox.Find(c => c.Name == boxName);
+            ClientBoxEntity userBox = null;
+
+            foreach (var box in user)
+            {
+                if (box.Name == boxName)
+                {
+                    userBox = box;
+                    break;
+                }
+            }
+
+            return userBox;
         }
 
-        //public async Task DeleteMail(string name, string boxName, uint mailUid)
-        //{
-        //    var box = await GetBox(name, boxName);
-        //    var usersCollection = GetCollection(database, "Clients");
-        //    var mail = box.Mails.Remove(box.Mails.Find(m => m.Uid == mailUid));
-        //    await usersCollection.Upda(box);
-        //}
+        public async Task AddMail(string name, string boxName, MailEntity mailEntity)
+        {
+            var builder = Builders<BsonDocument>.Filter;
+
+            var filter = builder.And(
+                builder.Eq("Name", name),
+                builder.Eq("ClientBox.Name", boxName));
+
+
+            var users = GetCollection(database, "Clients");
+
+            var mail = mailEntity.ToBsonDocument();
+
+            var updateSettings = Builders<BsonDocument>.Update.Push("ClientBox.$.Mails", mail);
+
+            await users.UpdateOneAsync(filter, updateSettings);
+        }
+
+        public async Task DeleteMail(string name, string boxName, MailEntity mailEntity)
+        {
+            var builder = Builders<ClientEntity>.Filter;
+
+            var filter = builder.And(builder.Eq("Name", name),
+                builder.ElemMatch(c => c.ClientBox, c => c.Name == boxName));
+            var users = GetCollection(database, "Clients");
+
+            var mail = mailEntity.ToBsonDocument();
+            var updateSettings = new BsonDocument("pull", mail);
+
+
+            await users.UpdateOneAsync(filter.ToBsonDocument(), updateSettings);
+
+        }
     }
+
 }

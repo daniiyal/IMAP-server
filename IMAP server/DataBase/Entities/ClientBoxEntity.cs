@@ -5,36 +5,22 @@ namespace IMAP_server.DataBase.Entities
 {
     public class ClientBoxEntity
     {
-        [BsonId]
-        public ObjectId Id { get; set; }
-        
         public string Name { get; set; }
         public List<ClientBoxEntity> Boxes { get; set; }
-        public uint nextMailUid { get; set; }
+        public uint NextMailUid { get; set; }
+        public ulong UidValidity { get; set; }
 
         public List<MailEntity> Mails { get; set; }
 
         public ClientBoxEntity(string boxName)
         {
             Name = boxName;
-            nextMailUid = 1;
+            NextMailUid = 1;
+            UidValidity = 1;
             Boxes = new List<ClientBoxEntity>();
             Mails = new List<MailEntity>();
         }
 
-        public void InitBoxes()
-        {
-            nextMailUid = 1;
-            var boxes = new List<ClientBoxEntity>()
-            {
-                new("Drafts"),
-                new("Junk"),
-                new("Sent"),
-                new("Trash")
-            };
-
-            Boxes.AddRange(boxes);
-        }
         public IEnumerator<ClientBoxEntity> GetEnumerator()
         {
             yield return this;
@@ -47,5 +33,11 @@ namespace IMAP_server.DataBase.Entities
             }
         }
 
+        public async Task AddMail(String clientName, DBContext dbContext, MailEntity mailEntity)
+        {
+            await dbContext.AddMail(clientName, Name, mailEntity);
+            NextMailUid++;
+            UidValidity++;
+        }
     }
 }

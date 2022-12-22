@@ -13,17 +13,21 @@ namespace IMAP_server.DataBase.Entities
         [BsonId]
         public ObjectId Id { get; set; }
         public string Name { get; set; }
-        public ulong UidValidity { get; set; }
         public string Password { get; set; }
-        public List<ClientBoxEntity> ClientBox { get; set; }
+        public List<ClientBoxEntity>? ClientBox { get; set; }
 
         public ClientEntity(string name, string password)
         {
             Name = name;
             Password = password;
-            ClientBox = new List<ClientBoxEntity>() {new("INBOX")};
-            UidValidity = 1;
-            ClientBox[0].InitBoxes();
+            ClientBox = new List<ClientBoxEntity>()
+            {
+                new("INBOX"),
+                new("Drafts"),
+                new("Junk"),
+                new("Sent"),
+                new("Trash")
+            };
         }
 
         public IEnumerator<ClientBoxEntity> GetEnumerator()

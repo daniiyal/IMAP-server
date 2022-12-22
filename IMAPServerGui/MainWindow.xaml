@@ -83,7 +83,7 @@
         <Grid Grid.Column="1"
                   x:Name="UsersPanel"
                   Margin="20 0 20 0"
-                  Visibility="Visible">
+                  Visibility="Hidden">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -207,7 +207,7 @@
         <Grid Grid.Column="1"
               Margin="20 0 20 0"
               x:Name="ServerSettings"
-              Visibility="Hidden">
+              Visibility="Visible">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -248,11 +248,11 @@
     
                 <Grid>      
                     <TextBlock VerticalAlignment="Center"
+                               x:Name="IPaddress"
                                Foreground="#b0b9c6"
                                IsHitTestVisible="False"
                                Margin="20 0"
                                Panel.ZIndex="1"
-                               Text="IP адрес"
                                Visibility="{Binding ElementName=IPinput, Path=Text.IsEmpty, Converter={StaticResource BoolToVis}}"/>
                     <TextBox x:Name="IPinput" Style="{StaticResource addressInput}"/>
                 </Grid>
