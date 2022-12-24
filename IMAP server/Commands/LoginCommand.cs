@@ -35,7 +35,7 @@ namespace IMAP_server.Commands
 
                 await Client.SendMessageAsync(commandNum, Status.OK, "User logged in");
                 Client.ClientEntity = clientEntity;
-                //await AddMail(ClientEntity.ClientBox[0]);
+                //await Client.AddMail(Client.ClientEntity.ClientBox[0]);
                 Client.ClientState = ClientState.AUTHENTICATED;
             }
             catch (Exception e)

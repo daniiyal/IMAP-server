@@ -26,7 +26,7 @@ namespace IMAP_server.DataBase
         public async Task<ClientEntity?> GetClientAsync(string name)
         {
             ClientEntity? client = null;
-            var filter = new BsonDocument {{"Name", name}};
+            var filter = new BsonDocument { { "Name", name } };
             var dbClient = await GetCollection(database, "Clients").Find(filter).FirstOrDefaultAsync();
 
             if (dbClient == null)
@@ -124,25 +124,32 @@ namespace IMAP_server.DataBase
 
             var mail = mailEntity.ToBsonDocument();
 
-            var updateSettings = Builders<BsonDocument>.Update.Push("ClientBox.$.Mails", mail);
+            var updateSettings = Builders<BsonDocument>.Update.Set("ClientBox.$.NextMailUid", mailEntity.Uid+1).Set("ClientBox.$.UidValidity", mailEntity.Uid + 1).Push("ClientBox.$.Mails", mail);
 
             await users.UpdateOneAsync(filter, updateSettings);
         }
 
         public async Task DeleteMail(string name, string boxName, MailEntity mailEntity)
         {
-            var builder = Builders<ClientEntity>.Filter;
+            var builder = Builders<BsonDocument>.Filter;
 
             var filter = builder.And(builder.Eq("Name", name),
-                builder.ElemMatch(c => c.ClientBox, c => c.Name == boxName));
+                                                builder.Eq("ClientBox.Name", boxName));
+
             var users = GetCollection(database, "Clients");
 
             var mail = mailEntity.ToBsonDocument();
-            var updateSettings = new BsonDocument("pull", mail);
 
+            var updateSettings = Builders<BsonDocument>.Update.Pull("ClientBox.$.Mails", mail);
 
-            await users.UpdateOneAsync(filter.ToBsonDocument(), updateSettings);
+            await users.UpdateOneAsync(filter, updateSettings);
+        }
 
+        public async Task<List<MailEntity>> GetMails(String user, String boxName)
+        {
+            var box = await GetBox(user, boxName);
+
+            return box.Mails;
         }
     }
 

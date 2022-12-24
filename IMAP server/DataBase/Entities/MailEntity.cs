@@ -30,5 +30,24 @@ namespace IMAP_server.DataBase.Entities
             Body = body;
             Created = created;
         }
+
+        public override string ToString()
+        {
+            var message =  $"From: {From}\r\nTo: ";
+            foreach (var t in To)
+            {
+                message += $"{t} ";
+            }
+
+            message += "\r\nCc: ";
+            foreach (var c in Cc)
+            {
+                message += $"{Cc}";
+            }
+
+            message += $"\r\nBody: {Body}\r\nCreated: {Created.ToString()}";
+
+            return message;
+        }
     }
 }

@@ -7,20 +7,19 @@ using IMAP_server.Enums;
 
 namespace IMAP_server.Commands
 {
-    public class CapabilityCommand : Command
+    public class NoopCommand : Command
     {
         public override async Task Execute(Client client, string commandNum, string request)
         {
             Client = client;
             try
             {
-                await SendServiceResponseAsync(Client, "* CAPABILITY IMAP4 IMAP4rev1 AUTH=PLAIN");
-                await Client.SendMessageAsync(commandNum, Status.OK, "CAPABILITY Completed");
-
+                await Client.SendMessageAsync(commandNum, Status.OK, "NOOP completed");
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(e);
+                throw;
             }
         }
     }

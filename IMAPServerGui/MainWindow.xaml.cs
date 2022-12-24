@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,17 +23,20 @@ namespace IMAPServerGui
 
         private String IP { get; set; } = "127.0.0.1";
 
+        TextWriter _writer = null;
+
         private int Port { get; set; } = 143;
 
         public MainWindow()
         {
             InitializeComponent();
-           // IP = Server.GetLocalIPAddress();
+            _writer = new TextBoxStreamWriter(InfoBox);
+            Console.SetOut(_writer);
+            // IP = Server.GetLocalIPAddress();
             IPinput.Text = IP;
             PortInput.Text = Port.ToString();
 
         }
-
 
         public async Task<List<ClientEntity>> GetClients()
         {
@@ -50,7 +54,7 @@ namespace IMAPServerGui
         private async void StopButton_OnClick(object sender, RoutedEventArgs e)
         {
             Server.StopServer();
-            //await Server.ConnectClient();
+            
         }
 
         private void SetAddressButton_OnClick(object sender, RoutedEventArgs e)

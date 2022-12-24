@@ -82,13 +82,13 @@ namespace IMAP_server.Commands
                 {
                     if (b.Boxes.Count > 0)
                     {
-                        response = Encoding.UTF8.GetBytes($"* (\\HasChildren) \"/\" \"{b.Name}\"\r\n");
-                        parent = b.Name;
+                        response = Encoding.UTF8.GetBytes($"* LIST (\\HasChildren) \".\" \"{b.Name}\"\r\n");
+                        parent = b.Name + ".";
                         await stream.WriteAsync(response);
                     }
                     else
                     {
-                        response = Encoding.UTF8.GetBytes($"* (\\HasNoChildren) \"/\" \"{parent}/{b.Name}\"\r\n");
+                        response = Encoding.UTF8.GetBytes($"* LIST (\\HasNoChildren) \".\" \"{parent}{b.Name}\"\r\n");
                         await stream.WriteAsync(response);
                     }
                 }
@@ -106,13 +106,13 @@ namespace IMAP_server.Commands
                 {
                     if (clientBox.Boxes.Count > 0)
                     {
-                        response = Encoding.UTF8.GetBytes($"* (\\HasChildren) \".\" {clientBox.Name}\r\n");
+                        response = Encoding.UTF8.GetBytes($"* LIST (\\HasChildren) \".\" {clientBox.Name}\r\n");
                         parent = clientBox.Name + ".";
                         await stream.WriteAsync(response);
                     }
                     else
                     {
-                        response = Encoding.UTF8.GetBytes($"* (\\HasNoChildren) \".\" \"{parent}{clientBox.Name}\"\r\n");
+                        response = Encoding.UTF8.GetBytes($"* LIST (\\HasNoChildren) \".\" \"{parent}{clientBox.Name}\"\r\n");
                         await stream.WriteAsync(response);
                     }
                 }

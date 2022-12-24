@@ -19,7 +19,6 @@ namespace IMAP_server.Commands
                 await SendServiceResponseAsync(Client, "* BYE SUETA... IMAP server logging out");
                 await Client.SendMessageAsync(commandNum, Status.OK, "Logout Completed");
                 Client.ClientState = ClientState.LOGOUT;
-                Client.TcpClient.Close();
             }
             catch (Exception ex)
             {

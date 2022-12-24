@@ -33,11 +33,9 @@ namespace IMAP_server.DataBase.Entities
             }
         }
 
-        public async Task AddMail(String clientName, DBContext dbContext, MailEntity mailEntity)
+        public async Task AddMail(string clientName, DBContext dbContext, MailEntity mailEntity)
         {
             await dbContext.AddMail(clientName, Name, mailEntity);
-            NextMailUid++;
-            UidValidity++;
         }
     }
 }

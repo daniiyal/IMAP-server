@@ -30,12 +30,6 @@ namespace IMAP_server.Commands
                 await SendServiceResponseAsync(Client, $"[UIDNEXT {Client.SelectedBox.NextMailUid}] Predicted next UID");
                 await Client.SendMessageAsync(commandNum, Status.OK, "Select completed");
 
-                foreach (var mail in mails)
-                {
-                    mail.MailFlag = MailFlag.UNSEEN;
-                }
-
-
                 Client.ClientState |= ClientState.SELECTED;
             }
             catch (Exception ex)

@@ -34,6 +34,10 @@ namespace IMAP_server
                 {"LOGOUT", new LogoutCommand()},
                 {"NAMESPACE", new NamespaceCommand()},
                 {"CAPABILITY", new CapabilityCommand()},
+                {"NOOP", new NoopCommand()},
+                {"IDLE", new IdleCommand()},
+                {"FETCH", new FetchCommand()},
+                {"UID", new UIDCommand()}
             };
         }
 
@@ -42,16 +46,15 @@ namespace IMAP_server
         {
             var mails = new List<MailEntity>
             {
-                new (ClientEntity.ClientBox[0].NextMailUid, "es@we.es", new List<string> {"us@us.com"},
+                new (1, "es@we.es", new List<string> {"us@us.com"},
                     new List<string>(), "Hola", DateTime.Now),
-                new (ClientEntity.ClientBox[0].NextMailUid, "en@en.ru", new List<string> {"us@us.com"},
+                new (2, "en@en.ru", new List<string> {"us@us.com"},
                     new List<string>(), "Hello ", DateTime.Now)
-
             };
 
 
             foreach (var mailEntity in mails)
-            {
+            {    
                 await box.AddMail(ClientEntity.Name, DbContext, mailEntity);
             }
 
@@ -63,23 +66,35 @@ namespace IMAP_server
             {
                 await SendMessageAsync("*", Status.OK, "IMAP server ready");
 
+                
                 while (true)
                 {
-
+                    if (!TcpClient.Connected)
+                    {
+                        return;
+                    }
                     var requests = await ReadMessageAsync();
 
                     foreach (var request in requests)
                     {
+                        Console.WriteLine($"{DateTime.Now} - Received: {request}");
                         if (request.Split(' ').Length > 1)
                         {
                             var commandNum = request.Split(' ')[0];
 
-                            if (!commands.ContainsKey(request.Split()[1]))
+                            if (!commands.ContainsKey(request.Split()[1].ToUpper()))
                             {
                                 await SendMessageAsync(commandNum, Status.BAD, "Unknown Command");
                             }
 
-                            await commands[request.Split()[1]].Execute(this, commandNum, request);
+                            await commands[request.Split()[1].ToUpper()].Execute(this, commandNum, request);
+
+                            if (request.Split()[1].ToUpper() == "LOGOUT")
+                            {
+                                TcpClient.Client.Close();
+                                return;
+                            }
+
                         }
                     }
                 }
@@ -100,6 +115,8 @@ namespace IMAP_server
             {
                 var request = Encoding.UTF8.GetBytes($"{command} {status.Value} {message}\r\n");
 
+                Console.WriteLine($"{DateTime.Now} - Sent: {command} {status.Value} {message}");
+
                 await using (var stream = new NetworkStream(TcpClient.Client))
                 {
                     await stream.WriteAsync(request);
@@ -116,10 +133,7 @@ namespace IMAP_server
             }
 
         }
-
-
-
-
+        
         public async Task<List<string>> ReadMessageAsync()
         {
             List<string> result = new List<string>();
@@ -158,6 +172,7 @@ namespace IMAP_server
                 Console.WriteLine(ex.Message);
                 await SendMessageAsync("*", Status.BAD, "Oops...Couldn't handle request");
             }
+
 
             return result;
         }
